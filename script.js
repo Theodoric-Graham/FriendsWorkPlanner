@@ -1,6 +1,8 @@
 "use strict";
 
+const clearStorageBtn = document.querySelector(".clearBtn");
 const timeContainer = document.querySelector(".time-container");
+let id;
 
 const timeArr = [
   "12:00am",
@@ -30,17 +32,66 @@ const timeArr = [
   "12:00pm",
 ];
 
-timeArr.forEach((el) =>
-  timeContainer.insertAdjacentHTML(
-    "beforeend",
-    `
-      <div class="container">
-      ${el}
-      <div class="row">
-      <h2 class="hour">${el}</h2>
-      <textarea id="1" data-hour="1" class="description1"> </textarea>
-      <button class="saveBtn time-block"></button>
-      </div>
-      </div>`
-  )
-);
+//Looping over array, and creating an html element for each
+const renderList = function () {
+  timeArr.forEach((el, index) =>
+    timeContainer.insertAdjacentHTML(
+      "beforeend",
+      `
+    <div class="container">
+    <div class="row">
+    <h2 class="hour">${el}</h2>
+    <textarea class="description description-${index}"> </textarea>
+    <button class="saveBtn" id="${index}"> Save </button>
+    </div>
+    </div>`
+    )
+  );
+};
+
+renderList();
+//turning the textArea nodelist into an array
+const textArea = document.querySelectorAll(".description");
+let textAreaArr = Array.from(textArea, (el) => el.value);
+
+//assigning a click event to all buttons
+const btnSave = function (e) {
+  //guard clause
+  if (!e.target.classList.contains("saveBtn")) {
+    return;
+  } else {
+    id = e.target.getAttribute("id");
+    let currentText = textArea[id].value;
+    // Store
+    localStorage.setItem(`timeData${id}`, currentText);
+    console.log(currentText);
+    textAreaArr[id] = "";
+    textArea[id].value = "";
+  }
+};
+
+//get local storage
+const getStorage = function () {
+  //checks if local storage is available
+  if (typeof Storage !== "undefined") {
+    // need to implement dynamic selection but this works currently
+    textArea[0].value = localStorage.getItem("timeData0");
+    textArea[1].value = localStorage.getItem("timeData1");
+    textArea[2].value = localStorage.getItem("timeData2");
+  } else {
+    window.alert("You do not have access to local storage on this browser");
+  }
+};
+getStorage();
+
+//clear local storage function
+const clearStorage = function () {
+  let answer = window.prompt(
+    "Are you sure you want to clear your local storage?"
+  );
+  answer = answer.toLocaleLowerCase();
+  if (answer === "yes") localStorage.clear();
+};
+
+clearStorageBtn.addEventListener("click", clearStorage);
+timeContainer.addEventListener("click", btnSave);
