@@ -51,6 +51,7 @@ renderList();
 
 const textArea = document.querySelectorAll(".description");
 const textAreaArr = Array.from(textArea, (el) => el.value);
+
 //function to insert an element at a specific point in the array
 const insertAt = function (array, index, ...elementsArray) {
   array.splice(index, 1, ...elementsArray);
@@ -78,16 +79,15 @@ const btnSave = function (e) {
   //guard clause
   if (!e.target.classList.contains("saveBtn")) {
     return;
-  } else {
-    id = e.target.getAttribute("id");
-    let currentText = textArea[id].value;
-    // Store
-    //inserting elements at the specified id(index in this case), with the currentText
-    insertAt(descriptionArr, id, currentText);
-    localStorage.setItem("description", JSON.stringify(descriptionArr));
-    //Clears the field depending on which button is clicked
-    textArea[id].value = " ";
   }
+  id = e.target.getAttribute("id");
+  let currentText = textArea[id].value;
+  // Store
+  //inserting elements at the specified index(id in this case), with the currentText
+  insertAt(descriptionArr, id, currentText);
+  localStorage.setItem("description", JSON.stringify(descriptionArr));
+  //Clears the field depending on which button is clicked
+  textArea[id].value = " ";
 };
 
 //clear local storage function
